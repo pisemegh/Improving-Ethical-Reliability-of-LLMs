@@ -15,39 +15,6 @@ export const Navbar = () => {
             <span className="text-xl font-bold text-gradient">Ethical AI</span>
           </div>
           
-          <div className="hidden md:flex items-center gap-6">
-            <button
-              onClick={() => scrollToSection("home")}
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Home
-            </button>
-            <button
-              onClick={() => scrollToSection("about")}
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              About
-            </button>
-            <button
-              onClick={() => scrollToSection("demo")}
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Model Demo
-            </button>
-            <button
-              onClick={() => scrollToSection("team")}
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Team
-            </button>
-            <button
-              onClick={() => scrollToSection("contact")}
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Contact
-            </button>
-          </div>
-          
           <Button
             onClick={() => scrollToSection("demo")}
             className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold glow-blue"
