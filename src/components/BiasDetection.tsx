@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+
 import { AlertCircle, CheckCircle, Zap, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -29,7 +29,6 @@ export const BiasDetection = ({ onAnalysisComplete }: BiasDetectionProps) => {
   const [result, setResult] = useState<BiasResult | null>(null);
   const [isDetecting, setIsDetecting] = useState(false);
   const [isCorrecting, setIsCorrecting] = useState(false);
-  const [biasFilter, setBiasFilter] = useState<string>("all");
   const { toast } = useToast();
 
   const detectBias = () => {
@@ -60,7 +59,7 @@ export const BiasDetection = ({ onAnalysisComplete }: BiasDetectionProps) => {
 
       words.forEach((word) => {
         biasPatterns.forEach((bp) => {
-          if (bp.pattern.test(word) && (biasFilter === "all" || bp.type.toLowerCase() === biasFilter)) {
+          if (bp.pattern.test(word)) {
             biasedWords.push({
               word: word.trim(),
               type: bp.type,
@@ -142,24 +141,6 @@ export const BiasDetection = ({ onAnalysisComplete }: BiasDetectionProps) => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-4 items-end">
-            <div className="flex-1">
-              <label className="text-sm font-medium mb-2 block">Bias Type Filter</label>
-              <Select value={biasFilter} onValueChange={setBiasFilter}>
-                <SelectTrigger className="bg-space-dark border-primary/20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="gender">Gender</SelectItem>
-                  <SelectItem value="race">Race</SelectItem>
-                  <SelectItem value="political">Political</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
           <Textarea
             placeholder="Enter text to analyze for bias (e.g., 'The chairman made his decision and the old man agreed...')"
             className="min-h-[120px] border-primary/20 focus:border-primary bg-space-dark"

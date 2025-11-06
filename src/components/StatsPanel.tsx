@@ -35,13 +35,7 @@ export const StatsPanel = ({ latestResult }: { latestResult: BiasResult | null }
       { name: "Political", value: 0 },
       { name: "Other", value: 0 },
     ],
-    history: [
-      { time: "10:00", count: 0 },
-      { time: "10:15", count: 0 },
-      { time: "10:30", count: 0 },
-      { time: "10:45", count: 0 },
-      { time: "11:00", count: 0 },
-    ],
+    history: [],
     avgConfidence: 0,
   });
 
@@ -60,11 +54,12 @@ export const StatsPanel = ({ latestResult }: { latestResult: BiasResult | null }
           }
         });
 
-        // Update history
-        newStats.history = [
-          ...prev.history.slice(1),
-          { time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), count: latestResult.biasedWords.length },
-        ];
+        // Update history - keep last 10 data points
+        const newDataPoint = {
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          count: latestResult.biasedWords.length
+        };
+        newStats.history = [...prev.history, newDataPoint].slice(-10);
 
         // Calculate average confidence
         if (latestResult.biasedWords.length > 0) {
@@ -181,33 +176,44 @@ export const StatsPanel = ({ latestResult }: { latestResult: BiasResult | null }
             <CardTitle className="text-lg">Detection Trend</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={stats.history}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(230, 20%, 18%)" />
-                <XAxis
-                  dataKey="time"
-                  stroke="hsl(215, 20%, 65%)"
-                  tick={{ fill: "hsl(215, 20%, 65%)" }}
-                />
-                <YAxis stroke="hsl(215, 20%, 65%)" tick={{ fill: "hsl(215, 20%, 65%)" }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(230, 30%, 10%)",
-                    border: "1px solid hsl(195, 100%, 50%, 0.3)",
-                    borderRadius: "8px",
-                  }}
-                />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="count"
-                  stroke="hsl(195, 100%, 50%)"
-                  strokeWidth={3}
-                  dot={{ fill: "hsl(195, 100%, 50%)", r: 5 }}
-                  name="Biases Detected"
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            {stats.history.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={stats.history}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(230, 20%, 18%)" />
+                  <XAxis
+                    dataKey="time"
+                    stroke="hsl(215, 20%, 65%)"
+                    tick={{ fill: "hsl(215, 20%, 65%)" }}
+                  />
+                  <YAxis 
+                    stroke="hsl(215, 20%, 65%)" 
+                    tick={{ fill: "hsl(215, 20%, 65%)" }}
+                    allowDecimals={false}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "hsl(230, 30%, 10%)",
+                      border: "1px solid hsl(195, 100%, 50%, 0.3)",
+                      borderRadius: "8px",
+                    }}
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="count"
+                    stroke="hsl(195, 100%, 50%)"
+                    strokeWidth={3}
+                    dot={{ fill: "hsl(195, 100%, 50%)", r: 5 }}
+                    name="Biases Detected"
+                    animationDuration={500}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[300px] text-muted-foreground">
+                No analysis data yet. Start detecting bias to see trends.
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
